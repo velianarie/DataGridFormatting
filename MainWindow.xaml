@@ -1,0 +1,48 @@
+﻿<Window x:Class="DataGridFormatting.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DataGridFormatting"
+        Title="MainWindow" Height="250" Width="200"
+        Name="ThisWindow">
+    
+    <Window.Resources>
+        <local:NumericFormatConverter x:Key="MyNumericFormatConverter"/>
+    </Window.Resources>
+    
+    <StackPanel DataContext="{Binding ElementName=ThisWindow}">
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Choose format:   "/>
+            <ComboBox x:Name="FormatSpecifierInput" Width="40">
+                <ComboBoxItem Content="N" IsSelected="True" />
+                <ComboBoxItem Content="P" />
+                <ComboBoxItem Content="C" />
+            </ComboBox>
+        </StackPanel>
+
+        <local:PrecisionAdjuster x:Name="MyPrecisionAdjuster" Precision="4" HorizontalAlignment="Center"/>
+
+        <DataGrid ItemsSource="{Binding DataGridSource}" 
+                  AutoGenerateColumns="False" Margin="10" HorizontalAlignment="Center">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Items" Binding="{Binding Item}" />
+                <DataGridTemplateColumn Header="Rates">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource MyNumericFormatConverter}">
+                                        <Binding Path="Rate" />
+                                        <Binding ElementName="FormatSpecifierInput" Path="Text" />
+                                        <Binding ElementName="MyPrecisionAdjuster" Path="Precision" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+
+</Window>
+
